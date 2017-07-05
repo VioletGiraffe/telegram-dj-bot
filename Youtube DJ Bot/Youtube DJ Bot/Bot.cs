@@ -41,20 +41,45 @@ namespace Youtube_DJ_Bot
 
 		private void OnMessageReceived(Message msg)
 		{
+			var chatId = msg.Chat.Id;
+
 			if (msg.Text.StartsWith("/song") || msg.Text == ">") // request a random song
 			{
 				if (_youTube.Favorites.Count == 0)
 					return;
 
-				string reply = _youTube.Favorites[_rng.Next(0, _youTube.Favorites.Count)];
+				string reply = _youTube.Favorites[_rng.Next(0, _youTube.Favorites.Count)].Url();
 				Console.WriteLine(UsernameFromMessage(msg) + " requests a song. Replying with\n" + reply + "\n");
-				_client.SendReply(reply, msg.Chat.Id);
+				_client.SendReply(reply, chatId);
+			}
+			else if (msg.Text.StartsWith("/find "))
+			{
+				string subject = msg.Text.Substring("/find ".Length).ToLower();
+				bool searchInDescription = subject.StartsWith("-d ");
+				if (searchInDescription)
+					subject = subject.Substring("-d ".Length);
+
+				if (string.IsNullOrEmpty(subject))
+					return;
+
+				Console.WriteLine(UsernameFromMessage(msg) + " is searching for\n" + subject);
+
+				foreach (var vid in _youTube.Favorites)
+				{
+					if (vid.Title.ToLower().Contains(subject) || (searchInDescription && vid.Description.ToLower().Contains(subject)))
+					{
+						Console.WriteLine("Match: " + vid.Url());
+						_client.SendReply(vid.Url(), chatId);
+					}
+				}
+
+				Console.WriteLine("Search completed.");
 			}
 			else
 			{
 				var usage = @"Usage:
 /song or > - post a random song
-/song part_of_the_title_name - list all songs from the playlist that contain part_of_the_title_name (case insensitive)
+/find [-d] subject - list all songs from the playlist that contain subject in the title, or description if -d is specified (case insensitive)
 ";
 				_client.SendReply(usage, msg.Chat.Id);
 			}

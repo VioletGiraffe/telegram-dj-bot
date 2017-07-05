@@ -20,7 +20,7 @@ namespace Youtube_DJ_Bot
 			bot.Start();
 
 			Console.Title = bot.BotName;
-			Console.WriteLine("At any time, press any alphanum key to close the bot.");
+			Console.WriteLine("At any time, press Enter to stop the bot.");
 			Thread.Sleep(500);
 			Console.WriteLine("The bot is now working.\n\n");
 			MinimizeConsoleWindow();

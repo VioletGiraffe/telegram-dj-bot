@@ -15,17 +15,34 @@ namespace Youtube_DJ_Bot
 {
 	class YouTubeClient
 	{
+		public class Video
+		{
+			public Video(string title, string description, string id)
+			{
+				Title = title;
+				Description = description;
+				Id = id;
+			}
+
+			public string Url()
+			{
+				return "https://www.youtube.com/watch?v=" + Id;
+			}
+
+			public readonly string Title;
+			public readonly string Description;
+			public readonly string Id;
+		}
+
 		public void GetFavoriteVideos()
 		{
 			FetchFavorites().Wait();
 		}
 
-		public List<string> Favorites
+		public List<Video> Favorites
 		{
-			get { return _favoriteVideoUrls; }
+			get { return _favoriteVideos; }
 		}
-
-		private List<string> _favoriteVideoUrls = new List<string>();
 
 		private async Task FetchFavorites()
 		{
@@ -80,10 +97,20 @@ namespace Youtube_DJ_Bot
 			for (int i = 0; i < favoriteVideos.Count; ++i)
 			{
 				var item = favoriteVideos[i];
-				Console.WriteLine((i + 1).ToString() + ": " + item.Snippet.Title);
 				if (item.Snippet.Title != "Deleted video" && item.Snippet.Title != "Private video")
-					_favoriteVideoUrls.Add("https://youtu.be/" + item.Snippet.ResourceId.VideoId);
+				{
+					Video favoriteVideo = new Video(item.Snippet.Title, item.Snippet.Description, item.Snippet.ResourceId.VideoId);
+					_favoriteVideos.Add(favoriteVideo);
+					Console.WriteLine(_favoriteVideos.Count.ToString() + ": " + favoriteVideo.Title);
+				}
 			}
 		}
+
+
+		/// 
+		/// Data members
+		/// 
+
+		private List<Video> _favoriteVideos = new List<Video>();
 	}
 }
