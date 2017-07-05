@@ -45,6 +45,19 @@ namespace Youtube_DJ_Bot
 			_bot.Stop();
 		}
 
+		private static string UsernameFromMessage(Message msg)
+		{
+			string name = "";
+			if (msg.Chat.FirstName != null)
+				name += msg.Chat.FirstName;
+
+			if (msg.Chat.LastName != null)
+				name += " " + msg.Chat.LastName;
+
+			string result = msg.Chat.Username != null ? msg.Chat.Username + "(" + name + ")" : name;
+			return result;
+		}
+
 		private static void OnMessageReceived(Message msg)
 		{
 			if (msg.Text.StartsWith("/song") || msg.Text == ">") // request a random song
@@ -52,7 +65,9 @@ namespace Youtube_DJ_Bot
 				if (youTube.Favorites.Count == 0)
 					return;
 
-				_bot.SendReply(youTube.Favorites[_rng.Next(0, youTube.Favorites.Count)], msg.Chat.Id);
+				string reply = youTube.Favorites[_rng.Next(0, youTube.Favorites.Count)];
+				Console.WriteLine(UsernameFromMessage(msg) + " requests a song. Replying with\n" + reply + "\n");
+				_bot.SendReply(reply, msg.Chat.Id);
 			}
 			else
 			{
