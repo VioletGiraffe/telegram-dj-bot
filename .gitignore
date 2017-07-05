@@ -1,4 +1,4 @@
 .vs
-client_id.json
+client_*.json
 bin/
 obj/
