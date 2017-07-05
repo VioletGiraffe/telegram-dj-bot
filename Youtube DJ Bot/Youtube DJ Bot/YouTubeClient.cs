@@ -38,7 +38,7 @@ namespace Youtube_DJ_Bot
 					// This OAuth 2.0 access scope allows for read-only access to the authenticated 
 					// user's account, but not other types of account access.
 					new[] { YouTubeService.Scope.YoutubeReadonly },
-					"user",
+					"YoutubeUser",
 					CancellationToken.None,
 					new FileDataStore(this.GetType().ToString())
 				);
